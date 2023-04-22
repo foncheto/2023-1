@@ -119,7 +119,6 @@ void insertion_sort(int *arreglo, int N)
       arreglo[j + 1] = arreglo[j];
       j--;
     }
-    
     arreglo[j+1] = value; // ponemos value donde corresponde
   }
 }
@@ -297,7 +296,6 @@ void quick_sort_v2(int *arreglo, int N)
 {
   quick_sort_aux_v2(arreglo, 0, N-1);
 }
-
 // Implementacion recursiva de quick_sort_aux_v2
 // Notar que el caso base es cuando ipos >= fpos
 void quick_sort_aux_v2(int *arreglo, int ipos, int fpos)
