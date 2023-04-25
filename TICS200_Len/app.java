@@ -2,12 +2,13 @@ class Persona {
     String nombre;
     String apellido;
     int edad;
-    
+    int rut;
 
-    public Persona(String nombre, String apellido, int edad) {
+    public Persona(String nombre, String apellido, int edad, int rut) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.edad = edad;
+        this.rut = rut;
     }
 
     public String getNombre() {
@@ -22,6 +23,10 @@ class Persona {
         return edad;
     }
 
+    public int getRut() {
+        return rut;
+    }
+
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
@@ -32,6 +37,10 @@ class Persona {
 
     public void setEdad(int edad) {
         this.edad = edad;
+    }
+
+    public void setRut(int rut) {
+        this.rut = rut;
     }
 
     @Override
@@ -45,7 +54,7 @@ class Persona {
     }
 
 public static void main(String[] args) {
-    Persona persona = new Persona("Juan", "Perez", 25);
+    Persona persona = new Persona("Juan", "Perez", 25, 12345678);
     System.out.println(persona);
     persona.setNombre("Pedro");
     persona.setApellido("Gomez");
