@@ -5,4 +5,4 @@ def log(n, b):
         return 1 + log(n / b, b)
 
 
-print(log(8, 3))
+print(log(9, 3))
