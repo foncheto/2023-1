@@ -1,12 +1,8 @@
-from itertools import cycle
+def log(n, b):
+    if n < b:
+        return 0
+    else:
+        return 1 + log(n / b, b)
 
-def digito_verificador(rut):
-    reversed_digits = map(int, reversed(str(rut)))
-    factors = cycle(range(2, 8))
-    s = sum(d * f for d, f in zip(reversed_digits, factors))
-    return (-s) % 11
-n = 0
-while n<10:
-    digito = digito_verificador(int(input("Ingrese rut: ")))
-    print(digito)
-    n+=1
+
+print(log(8, 3))
