@@ -296,6 +296,7 @@ void quick_sort_v2(int *arreglo, int N)
 {
   quick_sort_aux_v2(arreglo, 0, N-1);
 }
+
 // Implementacion recursiva de quick_sort_aux_v2
 // Notar que el caso base es cuando ipos >= fpos
 void quick_sort_aux_v2(int *arreglo, int ipos, int fpos)
