@@ -1,4 +1,4 @@
-
+package App2Try;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -14,7 +14,7 @@ public class ClienteCSV {
         List<Cliente> clientes = new ArrayList<>();
         
         // Cargar los datos del archivo CSV en una lista de clientes
-        try (BufferedReader br = new BufferedReader(new FileReader("App2Try/BigMuscle.csv"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("App2Try/jaja.csv"))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] datos = line.split(",");
