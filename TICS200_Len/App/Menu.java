@@ -6,10 +6,19 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Iterator;
 
 
 public class Menu {
-    public void runMenu(List<Cliente> clientes ) {
+    public void runMenu() {
+        Registro registro = new Registro();
+        List<Cliente> clientes = registro.leerRegistro();
+
+        if (clientes == null) {
+            System.err.println("No se pudo cargar el registro");
+            return;
+        }
+
         // Mostrar el menú
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         int opcion;
@@ -39,7 +48,7 @@ public class Menu {
                     System.out.println("Agregar un Cliente");
                     break;
                 case 4:
-                    System.out.println("Eliminar un Cliente");
+                    eliminarCliente(clientes, reader);
                     break;
                 case 5:
                     System.out.println("Editar un Cliente");
@@ -91,13 +100,37 @@ public class Menu {
         }
     }
     private static void guardarClientesEnArchivo(List<Cliente> clientes) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("App/new.csv"))) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("App/Datos/new.csv"))) {
             for (Cliente cliente : clientes) {
                 bw.write(cliente.getRut() + "," + cliente.getNombre() + "," + cliente.getEdad() + "," +cliente.getCod_plan() + "," + cliente.getDescripcion_plan() + "," + cliente.getDesde() + "," +cliente.getHasta() + "," + cliente.getCod_sede() + "," + cliente.getUbicacion_sede());
                 bw.newLine();
             }
         } catch (IOException e) {
             System.err.println("Error al guardar los clientes en el archivo: " + e.getMessage());
+        }
+    }
+
+    private static void eliminarCliente(List<Cliente> clientes, BufferedReader reader) {
+        System.out.print("Ingrese el RUT del cliente a eliminar: ");
+        String rut;
+        try {
+            rut = reader.readLine();
+        } catch (IOException e) {
+        System.err.println("Error al leer el rut del cliente: " + e.getMessage());
+        return;
+        }
+        Iterator<Cliente> iterator = clientes.iterator();
+        boolean encontrado = false;
+        while (iterator.hasNext()) {
+        Cliente cliente = iterator.next();
+        if (cliente.getRut().equalsIgnoreCase(rut)) {
+        iterator.remove();
+        System.out.println("Cliente eliminado: " + cliente);
+        encontrado = true;
+        }
+        }
+        if (!encontrado) {
+        System.out.println("No se encontró ningún cliente con ese nombre");
         }
     }
 }

@@ -12,7 +12,7 @@ public class Registro {
         List<Cliente> clientes = new ArrayList<>();
             
             // Cargar los datos del archivo CSV en una lista de clientes
-        try (BufferedReader br = new BufferedReader(new FileReader("App/BigMuscle.csv"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("App/Datos/BigMuscle.csv"))) {
             String line;
             int count = 0;
             while ((line = br.readLine()) != null) {
