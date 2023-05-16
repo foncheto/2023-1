@@ -108,7 +108,7 @@ public class Cliente {
         } catch (NumberFormatException e) {
             return false;
         }
-
+        
         int fecha = Integer.parseInt(desde.replace("-", ""));
         int fecha2 = Integer.parseInt(hasta.replace("-", ""));
         

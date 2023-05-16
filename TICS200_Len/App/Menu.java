@@ -1,6 +1,8 @@
 package App;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
@@ -28,7 +30,7 @@ public class Menu {
             System.out.println("3. Agregar un nuevo cliente");
             System.out.println("4. Eliminar un cliente");
             System.out.println("5. Editar un cliente");
-            System.out.println("0. Salir");
+            System.out.println("0. Salir y Guardar");
             System.out.print("Seleccione una opción: ");
             try {
                 opcion = Integer.parseInt(reader.readLine());
@@ -54,6 +56,7 @@ public class Menu {
                     break;
                 case 0:
                     System.out.println("Saliendo...");
+                    guardarClientesEnArchivo(registro_csv);
                     break;
                 default:
                     System.out.println("Opción inválida");
@@ -95,6 +98,16 @@ public class Menu {
         }
         if (!encontrado) {
             System.out.println("No se encontró ningún cliente con ese nombre");
+        }
+    }
+    private static void guardarClientesEnArchivo(List<Cliente> clientes) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("App/new.csv"))) {
+            for (Cliente cliente : clientes) {
+                bw.write(cliente.getRut() + "," + cliente.getNombre() + "," + cliente.getEdad() + "," +cliente.getCod_plan() + "," + cliente.getDescripcion_plan() + "," + cliente.getDesde() + "," +cliente.getHasta() + "," + cliente.getCod_sede() + "," + cliente.getUbicacion_sede());
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            System.err.println("Error al guardar los clientes en el archivo: " + e.getMessage());
         }
     }
 }
