@@ -1,5 +1,5 @@
 
-package App;
+package backup;
 public class Cliente {
     private String rut;
     private String nombre_completo;

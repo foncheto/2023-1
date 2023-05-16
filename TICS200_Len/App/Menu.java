@@ -9,7 +9,7 @@ import java.util.List;
 
 
 public class Menu {
-    public void runMenu(List<Cliente> registro_csv ) {
+    public void runMenu(List<Cliente> clientes ) {
         // Mostrar el menú
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         int opcion;
@@ -30,10 +30,10 @@ public class Menu {
             System.out.println();
             switch (opcion) {
                 case 1:
-                    verClientes(registro_csv);
+                    verClientes(clientes);
                     break;
                 case 2:
-                    buscarClientePorRUT(registro_csv, reader);
+                    buscarClientePorRUT(clientes, reader);
                     break;
                 case 3:
                     System.out.println("Agregar un Cliente");
@@ -46,7 +46,7 @@ public class Menu {
                     break;
                 case 0:
                     System.out.println("Saliendo...");
-                    guardarClientesEnArchivo(registro_csv);
+                    guardarClientesEnArchivo(clientes);
                     break;
                 default:
                     System.out.println("Opción inválida");
