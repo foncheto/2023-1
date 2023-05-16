@@ -20,10 +20,15 @@ public class Registro {
                 
                 cliente.setRut(cliente.getRut().replace("-", ""));
 
-                try {if (cliente.validarRut()) {
+                try {if (!cliente.validarRut()) {
+                    System.out.println("El RUT " + cliente.getRut() + " es inválido, el cliente fue omitido");
+                } else if (!cliente.validarFecha()){
+                    System.out.println("Las fechas " + cliente.getDesde() +" y/o " + cliente.getHasta() + " son inválidas, el cliente fue omitido");
+                } else if (!cliente.validarPlanSede()) {
+                    System.out.println("El plan " + cliente.getCod_plan() + " y/o la sede " + cliente.getCod_sede() + " son inválidos, el cliente fue omitido");
+                }
+                else {
                     clientes.add(cliente);
-                } else {
-                    System.out.println("El RUT " + cliente.getRut() + " es inválido");
                 }
                 } catch (Exception e) {
                     System.out.println("");

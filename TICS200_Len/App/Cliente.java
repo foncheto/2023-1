@@ -74,7 +74,7 @@ public class Cliente {
 
         int suma = 0;
         int multiplicador = 2;
-        
+
         if (rutSinDv.length() < 7 || rutSinDv.length() > 9) {
             return false;
         }
@@ -101,6 +101,24 @@ public class Cliente {
 
         return dvCalculado.charAt(0) == dv;
     }
+    public boolean validarFecha() {
+        try {
+            Integer.parseInt(desde.replace("-", ""));
+            Integer.parseInt(hasta.replace("-", ""));
+        } catch (NumberFormatException e) {
+            return false;
+        }
 
+        int fecha = Integer.parseInt(desde.replace("-", ""));
+        int fecha2 = Integer.parseInt(hasta.replace("-", ""));
+        
+        return fecha<fecha2;
+    }
 
+    public boolean validarPlanSede() {
+        String plan = cod_plan;
+        String sede = cod_sede;
+        
+        return !plan.equals("Vacio") && !sede.equals("Vacio");
+    }
 }

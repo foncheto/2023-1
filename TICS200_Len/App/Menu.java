@@ -44,7 +44,13 @@ public class Menu {
                     buscarClientePorRUT(registro_csv, reader);
                     break;
                 case 3:
-                    System.out.println("Leer y generar registro de Clientes");
+                    System.out.println("Agregar un Cliente");
+                    break;
+                case 4:
+                    System.out.println("Eliminar un Cliente");
+                    break;
+                case 5:
+                    System.out.println("Editar un Cliente");
                     break;
                 case 0:
                     System.out.println("Saliendo...");
@@ -68,6 +74,7 @@ public class Menu {
         for (Cliente cliente : clientes) {
             System.out.println(cliente);
         }
+        System.out.println("Total de clientes: " + clientes.size());
     }
     
     private static void buscarClientePorRUT(List<Cliente> clientes, BufferedReader reader) {
@@ -81,7 +88,7 @@ public class Menu {
         }
         boolean encontrado = false;
         for (Cliente cliente : clientes) {
-            if (cliente.getNombre().equalsIgnoreCase(rut)) {
+            if (cliente.getRut().equalsIgnoreCase(rut)) {
                 System.out.println(cliente);
                 encontrado = true;
             }
