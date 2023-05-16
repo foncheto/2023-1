@@ -18,10 +18,15 @@ public class Registro {
                 String[] datos = line.split(",");
                 Cliente cliente = new Cliente(datos[0], datos[1], datos[2], datos[3], datos[4], datos[5], datos[6], datos[7], datos[8]);
                 
-                if (cliente.validarRut()) {
+                cliente.setRut(cliente.getRut().replace("-", ""));
+
+                try {if (cliente.validarRut()) {
                     clientes.add(cliente);
                 } else {
-                    System.out.println("El RUT " + cliente.rut + " es inválido");
+                    System.out.println("El RUT " + cliente.getRut() + " es inválido");
+                }
+                } catch (Exception e) {
+                    System.out.println("");
                 }
             }
         } catch (IOException e) {
