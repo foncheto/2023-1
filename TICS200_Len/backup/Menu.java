@@ -9,7 +9,17 @@ import java.util.List;
 
 
 public class Menu {
-    public void runMenu(List<Cliente> registro_csv ) {
+    public static void main(String[] args) {
+
+        // Cargar los datos del archivo CSV en una lista de clientes
+        Registro registro = new Registro();
+        List<Cliente> registro_csv = registro.leerRegistro();
+
+        if (registro_csv == null) {
+            System.err.println("No se pudo cargar el registro");
+            return;
+        }
+    
         // Mostrar el menú
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         int opcion;
