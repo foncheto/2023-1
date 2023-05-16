@@ -18,7 +18,11 @@ public class Registro {
                 String[] datos = line.split(",");
                 Cliente cliente = new Cliente(datos[0], datos[1], datos[2], datos[3], datos[4], datos[5], datos[6], datos[7], datos[8]);
                 
-                clientes.add(cliente);
+                if (cliente.validarRut()) {
+                    clientes.add(cliente);
+                } else {
+                    System.out.println("El RUT " + cliente.rut + " es inválido");
+                }
             }
         } catch (IOException e) {
             System.err.println("Error al leer el archivo: " + e.getMessage());
