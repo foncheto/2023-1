@@ -114,7 +114,6 @@ public class Cliente {
         
         return fecha<=fecha2;
     }
-
     public boolean validarPlanSede() {
         String plan = cod_plan;
         String sede = cod_sede;
