@@ -5,11 +5,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Iterator;
 
 public class Registro {
+    List<Cliente> clientes = new ArrayList<>();
     
     public List<Cliente> leerRegistro() {
-        List<Cliente> clientes = new ArrayList<>();
             
             // Cargar los datos del archivo CSV en una lista de clientes
         try (BufferedReader br = new BufferedReader(new FileReader("App/Datos/BigMuscle.csv"))) {
@@ -46,5 +47,57 @@ public class Registro {
             return null;
         }
         return clientes;
+    }
+
+    public void verClientes() {
+        for (Cliente cliente : clientes) {
+            System.out.println(cliente);
+        }
+        System.out.println("Total de clientes: " + clientes.size());
+    }
+
+    public void buscarClientePorRUT(BufferedReader reader) {
+        System.out.print("Ingrese el RUT del cliente a buscar: ");
+        String rut;
+        try {
+            rut = reader.readLine();
+        } catch (IOException e) {
+            System.err.println("Error al leer el nombre del cliente: " + e.getMessage());
+            return;
+        }
+        boolean encontrado = false;
+        for (Cliente cliente : clientes) {
+            if (cliente.getRut().equalsIgnoreCase(rut)) {
+                System.out.println(cliente);
+                encontrado = true;
+            }
+        }
+        if (!encontrado) {
+            System.out.println("No se encontró ningún cliente con ese nombre");
+        }
+    }
+
+    public void eliminarCliente(BufferedReader reader) {
+        System.out.print("Ingrese el RUT del cliente a eliminar: ");
+        String rut;
+        try {
+            rut = reader.readLine();
+        } catch (IOException e) {
+        System.err.println("Error al leer el rut del cliente: " + e.getMessage());
+        return;
+        }
+        Iterator<Cliente> iterator = clientes.iterator();
+        boolean encontrado = false;
+        while (iterator.hasNext()) {
+        Cliente cliente = iterator.next();
+        if (cliente.getRut().equalsIgnoreCase(rut)) {
+        iterator.remove();
+        System.out.println("Cliente eliminado: " + cliente);
+        encontrado = true;
+        }
+        }
+        if (!encontrado) {
+        System.out.println("No se encontró ningún cliente con ese nombre");
+        }
     }
 }

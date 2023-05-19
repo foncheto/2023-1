@@ -6,7 +6,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
-import java.util.Iterator;
 
 
 public class Menu {
@@ -29,6 +28,8 @@ public class Menu {
             System.out.println("3. Agregar un nuevo cliente");
             System.out.println("4. Eliminar un cliente");
             System.out.println("5. Editar un cliente");
+            System.out.println("6. Planes");
+            System.out.println("7. Sedes");
             System.out.println("0. Salir y Guardar");
             System.out.print("Seleccione una opción: ");
             try {
@@ -39,19 +40,25 @@ public class Menu {
             System.out.println();
             switch (opcion) {
                 case 1:
-                    verClientes(clientes);
+                    registro.verClientes();
                     break;
                 case 2:
-                    buscarClientePorRUT(clientes, reader);
+                    registro.buscarClientePorRUT(reader);
                     break;
                 case 3:
                     System.out.println("Agregar un Cliente");
                     break;
                 case 4:
-                    eliminarCliente(clientes, reader);
+                    registro.eliminarCliente(reader);
                     break;
                 case 5:
                     System.out.println("Editar un Cliente");
+                    break;
+                case 6:
+                    System.out.println("Planes");
+                    break;
+                case 7:
+                    System.out.println("Sedes");
                     break;
                 case 0:
                     System.out.println("Saliendo...");
@@ -71,34 +78,7 @@ public class Menu {
             System.err.println("Error al cerrar el objeto BufferedReader: " + e.getMessage());
         }
     }
-    
-    private static void verClientes(List<Cliente> clientes) {
-        for (Cliente cliente : clientes) {
-            System.out.println(cliente);
-        }
-        System.out.println("Total de clientes: " + clientes.size());
-    }
-    
-    private static void buscarClientePorRUT(List<Cliente> clientes, BufferedReader reader) {
-        System.out.print("Ingrese el RUT del cliente a buscar: ");
-        String rut;
-        try {
-            rut = reader.readLine();
-        } catch (IOException e) {
-            System.err.println("Error al leer el nombre del cliente: " + e.getMessage());
-            return;
-        }
-        boolean encontrado = false;
-        for (Cliente cliente : clientes) {
-            if (cliente.getRut().equalsIgnoreCase(rut)) {
-                System.out.println(cliente);
-                encontrado = true;
-            }
-        }
-        if (!encontrado) {
-            System.out.println("No se encontró ningún cliente con ese nombre");
-        }
-    }
+
     private static void guardarClientesEnArchivo(List<Cliente> clientes) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter("App/Datos/new.csv"))) {
             for (Cliente cliente : clientes) {
@@ -107,30 +87,6 @@ public class Menu {
             }
         } catch (IOException e) {
             System.err.println("Error al guardar los clientes en el archivo: " + e.getMessage());
-        }
-    }
-
-    private static void eliminarCliente(List<Cliente> clientes, BufferedReader reader) {
-        System.out.print("Ingrese el RUT del cliente a eliminar: ");
-        String rut;
-        try {
-            rut = reader.readLine();
-        } catch (IOException e) {
-        System.err.println("Error al leer el rut del cliente: " + e.getMessage());
-        return;
-        }
-        Iterator<Cliente> iterator = clientes.iterator();
-        boolean encontrado = false;
-        while (iterator.hasNext()) {
-        Cliente cliente = iterator.next();
-        if (cliente.getRut().equalsIgnoreCase(rut)) {
-        iterator.remove();
-        System.out.println("Cliente eliminado: " + cliente);
-        encontrado = true;
-        }
-        }
-        if (!encontrado) {
-        System.out.println("No se encontró ningún cliente con ese nombre");
         }
     }
 }
