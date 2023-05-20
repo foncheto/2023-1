@@ -10,7 +10,7 @@ import java.util.Iterator;
 public class Registro {
     List<Cliente> clientes = new ArrayList<>();
     
-    public List<Cliente> leerRegistro() {
+    public void leerRegistro() {
             
             // Cargar los datos del archivo CSV en una lista de clientes
         try (BufferedReader br = new BufferedReader(new FileReader("App/Datos/BigMuscle.csv"))) {
@@ -44,9 +44,7 @@ public class Registro {
             }
         } catch (IOException e) {
             System.err.println("Error al leer el archivo: " + e.getMessage());
-            return null;
         }
-        return clientes;
     }
 
     public void verClientes() {
@@ -99,5 +97,13 @@ public class Registro {
         if (!encontrado) {
         System.out.println("No se encontró ningún cliente con ese nombre");
         }
+    }
+
+    public List<Cliente> getClientes() {
+        return clientes;
+    }
+
+    public void setClientes(List<Cliente> clientes) {
+        this.clientes = clientes;
     }
 }

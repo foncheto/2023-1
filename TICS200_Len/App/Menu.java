@@ -11,13 +11,7 @@ import java.util.List;
 public class Menu {
     public void runMenu() {
         Registro registro = new Registro();
-        List<Cliente> clientes = registro.leerRegistro();
-
-        if (clientes == null) {
-            System.err.println("No se pudo cargar el registro");
-            return;
-        }
-
+        registro.leerRegistro();
         // Mostrar el menú
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         int opcion;
@@ -62,6 +56,7 @@ public class Menu {
                     break;
                 case 0:
                     System.out.println("Saliendo...");
+                    List<Cliente> clientes = registro.getClientes();
                     guardarClientesEnArchivo(clientes);
                     break;
                 default:
@@ -80,7 +75,7 @@ public class Menu {
     }
 
     private static void guardarClientesEnArchivo(List<Cliente> clientes) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("App/Datos/new.csv"))) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("App/Datos/BigMuscle.bak"))) {
             for (Cliente cliente : clientes) {
                 bw.write(cliente.getRut() + "," + cliente.getNombre() + "," + cliente.getEdad() + "," +cliente.getCod_plan() + "," + cliente.getDescripcion_plan() + "," + cliente.getDesde() + "," +cliente.getHasta() + "," + cliente.getCod_sede() + "," + cliente.getUbicacion_sede());
                 bw.newLine();

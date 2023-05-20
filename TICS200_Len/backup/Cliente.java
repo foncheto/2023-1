@@ -1,5 +1,5 @@
 
-package backup;
+package App;
 public class Cliente {
     private String rut;
     private String nombre_completo;
@@ -63,6 +63,38 @@ public class Cliente {
         this.rut = rut;
     }
 
+    public void setNombre(String nombre_completo) {
+        this.nombre_completo = nombre_completo;
+    }
+
+    public void setEdad(String edad) {
+        this.edad = edad;
+    }
+
+    public void setCod_plan(String cod_plan) {
+        this.cod_plan = cod_plan;
+    }
+
+    public void setDescripcion_plan(String descripcion_plan) {
+        this.descripcion_plan = descripcion_plan;
+    }
+
+    public void setDesde(String desde) {
+        this.desde = desde;
+    }
+
+    public void setHasta(String hasta) {
+        this.hasta = hasta;
+    }
+
+    public void setCod_sede(String cod_sede) {
+        this.cod_sede = cod_sede;
+    }
+
+    public void setUbicacion_sede(String ubicacion_sede) {
+        this.ubicacion_sede = ubicacion_sede;
+    }
+
     @Override
     public String toString() {
         return rut + " - " + nombre_completo + " - " + edad + " - " + cod_plan + " - " + descripcion_plan + " - " + desde + " - " + hasta + " - " + cod_sede + " - " + ubicacion_sede;
@@ -114,7 +146,6 @@ public class Cliente {
         
         return fecha<=fecha2;
     }
-
     public boolean validarPlanSede() {
         String plan = cod_plan;
         String sede = cod_sede;

@@ -1,4 +1,4 @@
-package backup;
+package App;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -9,17 +9,15 @@ import java.util.List;
 
 
 public class Menu {
-    public static void main(String[] args) {
-
-        // Cargar los datos del archivo CSV en una lista de clientes
+    public void runMenu() {
         Registro registro = new Registro();
-        List<Cliente> registro_csv = registro.leerRegistro();
+        List<Cliente> clientes = registro.leerRegistro();
 
-        if (registro_csv == null) {
+        if (clientes == null) {
             System.err.println("No se pudo cargar el registro");
             return;
         }
-    
+
         // Mostrar el menú
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         int opcion;
@@ -30,6 +28,8 @@ public class Menu {
             System.out.println("3. Agregar un nuevo cliente");
             System.out.println("4. Eliminar un cliente");
             System.out.println("5. Editar un cliente");
+            System.out.println("6. Planes");
+            System.out.println("7. Sedes");
             System.out.println("0. Salir y Guardar");
             System.out.print("Seleccione una opción: ");
             try {
@@ -40,23 +40,29 @@ public class Menu {
             System.out.println();
             switch (opcion) {
                 case 1:
-                    verClientes(registro_csv);
+                    registro.verClientes();
                     break;
                 case 2:
-                    buscarClientePorRUT(registro_csv, reader);
+                    registro.buscarClientePorRUT(reader);
                     break;
                 case 3:
                     System.out.println("Agregar un Cliente");
                     break;
                 case 4:
-                    System.out.println("Eliminar un Cliente");
+                    registro.eliminarCliente(reader);
                     break;
                 case 5:
                     System.out.println("Editar un Cliente");
                     break;
+                case 6:
+                    System.out.println("Planes");
+                    break;
+                case 7:
+                    System.out.println("Sedes");
+                    break;
                 case 0:
                     System.out.println("Saliendo...");
-                    guardarClientesEnArchivo(registro_csv);
+                    guardarClientesEnArchivo(clientes);
                     break;
                 default:
                     System.out.println("Opción inválida");
@@ -72,36 +78,9 @@ public class Menu {
             System.err.println("Error al cerrar el objeto BufferedReader: " + e.getMessage());
         }
     }
-    
-    private static void verClientes(List<Cliente> clientes) {
-        for (Cliente cliente : clientes) {
-            System.out.println(cliente);
-        }
-        System.out.println("Total de clientes: " + clientes.size());
-    }
-    
-    private static void buscarClientePorRUT(List<Cliente> clientes, BufferedReader reader) {
-        System.out.print("Ingrese el RUT del cliente a buscar: ");
-        String rut;
-        try {
-            rut = reader.readLine();
-        } catch (IOException e) {
-            System.err.println("Error al leer el nombre del cliente: " + e.getMessage());
-            return;
-        }
-        boolean encontrado = false;
-        for (Cliente cliente : clientes) {
-            if (cliente.getRut().equalsIgnoreCase(rut)) {
-                System.out.println(cliente);
-                encontrado = true;
-            }
-        }
-        if (!encontrado) {
-            System.out.println("No se encontró ningún cliente con ese nombre");
-        }
-    }
+
     private static void guardarClientesEnArchivo(List<Cliente> clientes) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("App/new.csv"))) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("App/Datos/new.csv"))) {
             for (Cliente cliente : clientes) {
                 bw.write(cliente.getRut() + "," + cliente.getNombre() + "," + cliente.getEdad() + "," +cliente.getCod_plan() + "," + cliente.getDescripcion_plan() + "," + cliente.getDesde() + "," +cliente.getHasta() + "," + cliente.getCod_sede() + "," + cliente.getUbicacion_sede());
                 bw.newLine();
