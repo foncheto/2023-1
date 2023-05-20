@@ -1,17 +1,20 @@
 package App;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.List;
 
 
 public class Menu {
     public void runMenu() {
         Registro registro = new Registro();
         registro.leerRegistro();
+        Planes planes = new Planes();
+        planes.leerPlanes(registro.getClientes());
+        Sedes sedes = new Sedes();
+        sedes.leerSedes(registro.getClientes());
+
+        
         // Mostrar el menú
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         int opcion;
@@ -52,12 +55,11 @@ public class Menu {
                     System.out.println("Planes");
                     break;
                 case 7:
-                    System.out.println("Sedes");
+                    sedes.menuSedes(registro);
                     break;
                 case 0:
                     System.out.println("Saliendo...");
-                    List<Cliente> clientes = registro.getClientes();
-                    guardarClientesEnArchivo(clientes);
+                    registro.guardarClientesEnArchivo();
                     break;
                 default:
                     System.out.println("Opción inválida");
@@ -71,17 +73,6 @@ public class Menu {
             reader.close();
         } catch (IOException e) {
             System.err.println("Error al cerrar el objeto BufferedReader: " + e.getMessage());
-        }
-    }
-
-    private static void guardarClientesEnArchivo(List<Cliente> clientes) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("App/Datos/BigMuscle.bak"))) {
-            for (Cliente cliente : clientes) {
-                bw.write(cliente.getRut() + "," + cliente.getNombre() + "," + cliente.getEdad() + "," +cliente.getCod_plan() + "," + cliente.getDescripcion_plan() + "," + cliente.getDesde() + "," +cliente.getHasta() + "," + cliente.getCod_sede() + "," + cliente.getUbicacion_sede());
-                bw.newLine();
-            }
-        } catch (IOException e) {
-            System.err.println("Error al guardar los clientes en el archivo: " + e.getMessage());
         }
     }
 }

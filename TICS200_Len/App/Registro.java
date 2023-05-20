@@ -1,11 +1,15 @@
 package App;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.nio.charset.StandardCharsets;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 
 public class Registro {
     List<Cliente> clientes = new ArrayList<>();
@@ -13,7 +17,7 @@ public class Registro {
     public void leerRegistro() {
             
             // Cargar los datos del archivo CSV en una lista de clientes
-        try (BufferedReader br = new BufferedReader(new FileReader("App/Datos/BigMuscle.csv"))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("App/Datos/BigMuscle.csv"), StandardCharsets.UTF_8))) {
             String line;
             int count = 0;
             while ((line = br.readLine()) != null) {
@@ -21,7 +25,7 @@ public class Registro {
                 Cliente cliente = new Cliente(datos[0], datos[1], datos[2], datos[3], datos[4], datos[5], datos[6], datos[7], datos[8]);
                 
                 cliente.setRut(cliente.getRut().replace("-", ""));
-                
+
                 if (count == 0) { // Omitir la primera línea del archivo
                     clientes.add(cliente);
                     count++;
@@ -96,6 +100,17 @@ public class Registro {
         }
         if (!encontrado) {
         System.out.println("No se encontró ningún cliente con ese nombre");
+        }
+    }
+
+    public void guardarClientesEnArchivo() {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("App/Datos/BigMuscle.bak"))) {
+            for (Cliente cliente : clientes) {
+                bw.write(cliente.getRut() + "," + cliente.getNombre() + "," + cliente.getEdad() + "," +cliente.getCod_plan() + "," + cliente.getDescripcion_plan() + "," + cliente.getDesde() + "," +cliente.getHasta() + "," + cliente.getCod_sede() + "," + cliente.getUbicacion_sede());
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            System.err.println("Error al guardar los clientes en el archivo: " + e.getMessage());
         }
     }
 
