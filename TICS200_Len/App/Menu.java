@@ -44,13 +44,13 @@ public class Menu {
                     registro.buscarClientePorRUT(reader);
                     break;
                 case 3:
-                    registro.agregarCliente(reader, planes.getPlanes(), sedes.getSedes());
+                    registro.agregarCliente(planes.getPlanes(), sedes.getSedes());
                     break;
                 case 4:
                     registro.eliminarCliente(reader);
                     break;
                 case 5:
-                    System.out.println("Editar un Cliente");
+                    registro.editarCliente(planes.getPlanes(), sedes.getSedes());
                     break;
                 case 6:
                     planes.menuPlanes(registro);

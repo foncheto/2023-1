@@ -122,8 +122,10 @@ public class Registro {
         }
     }
 
-    public void agregarCliente(BufferedReader reader, List<Plan> planes, List<Sede> sedes) {
+    public void agregarCliente(List<Plan> planes, List<Sede> sedes) {
         System.out.print("Ingrese el RUT del cliente (sin guion): ");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
+
         String rut;
         try {
             rut = reader.readLine();
@@ -236,9 +238,138 @@ public class Registro {
         }
     }
 
+    public void editarCliente(List<Plan> planes, List<Sede> sedes) {
+        System.out.print("Ingrese el RUT del cliente a editar (sin guion): ");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
+
+        String rut;
+        try {
+            rut = reader.readLine();
+        } catch (IOException e) {
+            System.err.println("Error al leer el rut del cliente: " + e.getMessage());
+            return;
+        }
+        boolean encontrado = false;
+        for (Cliente cliente : clientes) {
+            if (rut.equals(cliente.getRut())) {
+                encontrado = true;
+                System.out.print("Ingrese el nuevo nombre del cliente (actual: " + cliente.getNombre() + "): ");
+                String nombre;
+                try {
+                    nombre = reader.readLine();
+                    cliente.setNombre(nombre);
+                } catch (IOException e) {
+                    System.err.println("Error al leer el nombre del cliente: " + e.getMessage());
+                    return;
+                }
+                System.out.print("Ingrese la nueva edad del cliente (actual: " + cliente.getEdad() + "): ");
+                String edad;
+                try {
+                    edad = reader.readLine();
+                    cliente.setEdad(edad);
+                } catch (IOException e) {
+                    System.err.println("Error al leer la edad del cliente: " + e.getMessage());
+                    return;
+                }
+                System.out.print("Ingrese el nuevo código del plan del cliente (actual: " + cliente.getCod_plan() + "): ");
+                String cod_plan;
+                try {
+                    cod_plan = reader.readLine();
+                    String aux = cliente.getCod_plan();
+                    cliente.setCod_plan(cod_plan);
+                    boolean planValido = false;
+                    for (Plan plan : planes) {
+                        if (cod_plan.equals(plan.getCod_plan())) {
+                            planValido = true;
+                            break;
+                        }
+                    }
+                    if (!planValido) {
+                        System.out.println("El plan " + cod_plan + " no existe, se mantuvo el plan " + aux);
+                        cliente.setCod_plan(aux);
+                    } else {
+                        System.out.println("Plan cambiado exitosamente");
+                    }
+
+                } catch (IOException e) {
+                    System.err.println("Error al leer el código del plan del cliente: " + e.getMessage());
+                    return;
+                }
+                System.out.print("Ingrese la nueva descripción del plan del cliente (actual: " + cliente.getDescripcion_plan() + "): ");
+                String descripcion_plan;
+                try {
+                    descripcion_plan = reader.readLine();
+                    cliente.setDescripcion_plan(descripcion_plan);
+                } catch (IOException e) {
+                    System.err.println("Error al leer la descripción del plan del cliente: " + e.getMessage());
+                    return;
+                }
+                System.out.print("Ingrese la nueva fecha de inicio del plan del cliente (formato sin guion: YYYYMMDD) (actual: " + cliente.getDesde() + "): ");
+                String desde;
+                String hasta;
+                try {
+                    desde = reader.readLine();
+                    String aux_d = cliente.getDesde();
+                    cliente.setDesde(desde);
+                    System.out.print("Ingrese la nueva fecha de término del plan del cliente (formato sin guion: YYYYMMDD) (actual: " + cliente.getHasta() + "): ");
+                    hasta = reader.readLine();
+                    String aux_h = cliente.getHasta();
+                    cliente.setHasta(hasta);
+                    if (!cliente.validarFecha()) {
+                        System.out.println("Las fechas " + cliente.getDesde() +" y/o " + cliente.getHasta() + " son inválidas, se mantuvieron las fechas " + aux_d + " y " + aux_h);
+                        cliente.setDesde(aux_d);
+                        cliente.setHasta(aux_h);
+                    } else {
+                        System.out.println("Fechas cambiadas exitosamente");
+                    }
+
+                } catch (IOException e) {
+                    System.err.println("Error al leer la fecha de término o inicio del plan del cliente: " + e.getMessage());
+                    return;
+                }
+                System.out.print("Ingrese el nuevo código de la sede del cliente (actual: " + cliente.getCod_sede() + "): ");
+                String cod_sede;
+                try {
+                    cod_sede = reader.readLine();
+                    String aux = cliente.getCod_sede();
+                    cliente.setCod_sede(cod_sede);
+                    boolean sedeValida = false;
+                    for (Sede sede : sedes) {
+                        if (cod_sede.equals(sede.getCod_sede())) {
+                            sedeValida = true;
+                            break;
+                        }
+                    }
+                    if (!sedeValida) {
+                        System.out.println("La sede " + cod_sede + " no existe, se mantuvo la sede " + aux);
+                        cliente.setCod_sede(aux);
+                    } else {
+                        System.out.println("Sede cambiada exitosamente");
+                    }
+                } catch (IOException e) {
+                    System.err.println("Error al leer el código de la sede del cliente: " + e.getMessage());
+                    return;
+                }
+                System.out.print("Ingrese la nueva ubicación de la sede del cliente (actual: " + cliente.getUbicacion_sede() + "): ");
+                String ubicacion_sede;
+                try {
+                    ubicacion_sede = reader.readLine();
+                    cliente.setUbicacion_sede(ubicacion_sede);
+                } catch (IOException e) {
+                    System.err.println("Error al leer la ubicación de la sede del cliente: " + e.getMessage());
+                    return;
+                }
+            }
+        }
+        if (!encontrado) {
+            System.out.println("No se encontró un cliente con ese RUT");
+            return;
+        }
+        
+    }
     public void guardarClientesEnArchivo(String nombreArchivo) {
 
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("App/Datos/"+nombreArchivo, StandardCharsets.UTF_8))) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("App/Datos/"+nombreArchivo))) {
             for (Cliente cliente : clientes) {
                 bw.write(cliente.getRut() + "," + cliente.getNombre() + "," + cliente.getEdad() + "," +cliente.getCod_plan() + "," + cliente.getDescripcion_plan() + "," + cliente.getDesde() + "," +cliente.getHasta() + "," + cliente.getCod_sede() + "," + cliente.getUbicacion_sede());
                 bw.newLine();
