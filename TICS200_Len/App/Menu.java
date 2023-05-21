@@ -6,8 +6,9 @@ import java.io.InputStreamReader;
 
 
 public class Menu {
+    Registro registro = new Registro();
     public void runMenu() {
-        Registro registro = new Registro();
+        registro.createBackup();
         registro.leerRegistro();
         Planes planes = new Planes();
         planes.leerPlanes(registro.getClientes());
@@ -43,7 +44,7 @@ public class Menu {
                     registro.buscarClientePorRUT(reader);
                     break;
                 case 3:
-                    System.out.println("Agregar un Cliente");
+                    registro.agregarCliente(reader, planes.getPlanes(), sedes.getSedes());
                     break;
                 case 4:
                     registro.eliminarCliente(reader);
@@ -52,14 +53,14 @@ public class Menu {
                     System.out.println("Editar un Cliente");
                     break;
                 case 6:
-                    System.out.println("Planes");
+                    planes.menuPlanes(registro);
                     break;
                 case 7:
                     sedes.menuSedes(registro);
                     break;
                 case 0:
                     System.out.println("Saliendo...");
-                    registro.guardarClientesEnArchivo();
+                    registro.guardarClientesEnArchivo("BigMuscle.csv");
                     break;
                 default:
                     System.out.println("Opción inválida");

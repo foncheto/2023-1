@@ -23,9 +23,15 @@ public class Sedes {
 
   public void leerSedes(List<Cliente> clientes) {
     List<Sede> sedesUnicas = new ArrayList<>();
+    boolean skip = true; // salta primer cliente
 
     // Recorrer la lista de clientes
     for (Cliente cliente : clientes) {
+        if (skip) {
+            skip = false;
+            continue;
+        }
+
         String codSedeCliente = cliente.getCod_sede();
         Sede sede = new Sede(codSedeCliente);
 
@@ -95,7 +101,6 @@ public class Sedes {
           break;
       }
     } while (option != 0);
-  
   }
 
 
