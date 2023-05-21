@@ -53,6 +53,55 @@ public class Planes {
         planes = planesUnicos;
     }
 
+    public void menuPlanes(Registro registro) {
+        int option;
+        do {
+          System.out.println("\n");
+          System.out.println("Menú planes");
+          System.out.println("1. Agregar plan");
+          System.out.println("2. Eliminar plan");
+          System.out.println("3. Ver planes");
+          System.out.println("4. Volver al menú principal");
+          System.out.println("\n");
+          System.out.println("Ingrese una opción: ");
+    
+          try {option = Integer.parseInt(System.console().readLine());
+          } catch (NumberFormatException e) {
+            option = -1;
+          }
+    
+          switch (option) {
+            case 1:
+              try {
+                agregarPlan();
+              } catch (IOException e) {
+                System.out.println("Error al ingresar e plan");
+              }
+              break;
+            case 2:
+              try {
+                eliminarPlan(registro.getClientes());
+              } catch (IOException e) {
+                System.out.println("Error al eliminar el plan");
+              }
+              break;
+            case 3:
+              verPlanes();
+              break;
+            case 4:
+              System.out.println("\n");
+              System.out.println("Volviendo al menú principal");
+              System.out.println("\n");
+              return;
+            default:
+              System.out.println("\n");
+              System.out.println("Ingrese una opción válida");
+              System.out.println("\n");
+              break;
+          }
+        } while (option != 0);
+      }
+
     public void agregarPlan() throws IOException {
         System.out.println("Ingrese el código del plan: ");
         String cod_plan = System.console().readLine();
@@ -81,7 +130,7 @@ public class Planes {
         System.out.println("\nNo se encontró el plan\n");
       }
 
-    public void verPlanes() throws IOException{
+    public void verPlanes() {
         for (Plan plan : planes) {
             System.out.println(plan.getCod_plan());
         }

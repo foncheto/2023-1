@@ -7,15 +7,16 @@ import java.io.InputStreamReader;
 
 public class Menu {
     Registro registro = new Registro();
+    public Planes planes;
+    public Sedes sedes;
     public void runMenu() {
         registro.createBackup();
         registro.leerRegistro();
-        Planes planes = new Planes();
+        planes = new Planes();
         planes.leerPlanes(registro.getClientes());
-        Sedes sedes = new Sedes();
+        sedes = new Sedes();
         sedes.leerSedes(registro.getClientes());
 
-        
         // Mostrar el menú
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         int opcion;
@@ -53,10 +54,12 @@ public class Menu {
                     registro.editarCliente(planes.getPlanes(), sedes.getSedes());
                     break;
                 case 6:
-                    planes.menuPlanes(registro);
+                    MenuPlanes menuPlanes = new MenuPlanes(planes, registro);
+                    menuPlanes.menu();
                     break;
                 case 7:
-                    sedes.menuSedes(registro);
+                    MenuSedes menuSedes = new MenuSedes(sedes, registro);
+                    menuSedes.menu();
                     break;
                 case 0:
                     System.out.println("Saliendo...");

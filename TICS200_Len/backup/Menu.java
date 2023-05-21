@@ -1,22 +1,19 @@
 package App;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.List;
 
 
 public class Menu {
+    Registro registro = new Registro();
     public void runMenu() {
-        Registro registro = new Registro();
-        List<Cliente> clientes = registro.leerRegistro();
-
-        if (clientes == null) {
-            System.err.println("No se pudo cargar el registro");
-            return;
-        }
+        registro.createBackup();
+        registro.leerRegistro();
+        Planes planes = new Planes();
+        planes.leerPlanes(registro.getClientes());
+        Sedes sedes = new Sedes();
+        sedes.leerSedes(registro.getClientes());
 
         // Mostrar el menú
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -46,23 +43,23 @@ public class Menu {
                     registro.buscarClientePorRUT(reader);
                     break;
                 case 3:
-                    System.out.println("Agregar un Cliente");
+                    registro.agregarCliente(planes.getPlanes(), sedes.getSedes());
                     break;
                 case 4:
                     registro.eliminarCliente(reader);
                     break;
                 case 5:
-                    System.out.println("Editar un Cliente");
+                    registro.editarCliente(planes.getPlanes(), sedes.getSedes());
                     break;
                 case 6:
-                    System.out.println("Planes");
+                    planes.menuPlanes(registro);
                     break;
                 case 7:
-                    System.out.println("Sedes");
+                    sedes.menuSedes(registro);
                     break;
                 case 0:
                     System.out.println("Saliendo...");
-                    guardarClientesEnArchivo(clientes);
+                    registro.guardarClientesEnArchivo("BigMuscle.csv");
                     break;
                 default:
                     System.out.println("Opción inválida");
@@ -76,17 +73,6 @@ public class Menu {
             reader.close();
         } catch (IOException e) {
             System.err.println("Error al cerrar el objeto BufferedReader: " + e.getMessage());
-        }
-    }
-
-    private static void guardarClientesEnArchivo(List<Cliente> clientes) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("App/Datos/new.csv"))) {
-            for (Cliente cliente : clientes) {
-                bw.write(cliente.getRut() + "," + cliente.getNombre() + "," + cliente.getEdad() + "," +cliente.getCod_plan() + "," + cliente.getDescripcion_plan() + "," + cliente.getDesde() + "," +cliente.getHasta() + "," + cliente.getCod_sede() + "," + cliente.getUbicacion_sede());
-                bw.newLine();
-            }
-        } catch (IOException e) {
-            System.err.println("Error al guardar los clientes en el archivo: " + e.getMessage());
         }
     }
 }
