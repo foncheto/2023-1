@@ -1,8 +1,8 @@
-package App;
+package App2;
 
 import java.io.IOException;
 
-
+//llamamos el menu para los planes y creamos la clase MenuPlanes
 public class MenuPlanes extends Menu{
     
     Planes planes = super.planes;
@@ -12,7 +12,7 @@ public class MenuPlanes extends Menu{
         this.planes = planes;
         this.registro = registro;
     }
-
+//esta seria la intefraz del menu, con sus respectivas opciones, el input del usuario y que lo interprete
     public void menu() {
         int option;
         do {
@@ -29,13 +29,13 @@ public class MenuPlanes extends Menu{
           } catch (NumberFormatException e) {
             option = -1;
           }
-    
+ //creamos los casos donde haya un error y que genere un print para que el usuario vea que hubo un error y le haga otra solicitud de sus opciones para trabajar con los planes 
           switch (option) {
             case 1:
                 try {
                     planes.agregarPlan();
                 } catch (IOException e) {
-                    System.out.println("Error al ingresar e plan");
+                    System.out.println("Error al ingresar el plan");
                 }
                 break;
             case 2:

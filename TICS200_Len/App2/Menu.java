@@ -1,4 +1,4 @@
-package App;
+package App2;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,18 +6,23 @@ import java.io.InputStreamReader;
 
 
 public class Menu {
+  // Inicia el registro 
     Registro registro = new Registro();
     public Planes planes;
     public Sedes sedes;
     public void runMenu() {
+      // Genera el respaldo .bak
         registro.createBackup();
+      // Lee el registro y rellena la lista clientes del registro con la info del csv
         registro.leerRegistro();
         planes = new Planes();
         planes.leerPlanes(registro.getClientes());
+      // Genera la lista de planes a partir de la lista de clientes, atributo de registro
         sedes = new Sedes();
         sedes.leerSedes(registro.getClientes());
+      // Genera la lista de sede a partir de la lista de clientes, atributo de registro
 
-        // Mostrar el menú
+        // Mostrar el menú principal
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         int opcion;
         do {
@@ -39,29 +44,37 @@ public class Menu {
             System.out.println();
             switch (opcion) {
                 case 1:
+                // Ejecuta el metodo verClientes del objeto registro
                     registro.verClientes();
                     break;
                 case 2:
+                // Ejecuta el metodo buscarClientePorRUT del objeto registro
                     registro.buscarClientePorRUT(reader);
                     break;
                 case 3:
+                // Ejecuta el metodo agregarClientes del objeto registro
                     registro.agregarCliente(planes.getPlanes(), sedes.getSedes());
                     break;
                 case 4:
+                // Ejecuta el metodo eliminarClientes del objeto registro
                     registro.eliminarCliente(reader);
                     break;
                 case 5:
+                // Ejecuta el metodo editarClientes del objeto registro
                     registro.editarCliente(planes.getPlanes(), sedes.getSedes());
                     break;
                 case 6:
+                // Ejecuta el metodo menu del objeto menuPlanes e inicializa el submenu de sedes
                     MenuPlanes menuPlanes = new MenuPlanes(planes, registro);
                     menuPlanes.menu();
                     break;
                 case 7:
+                // Ejecuta el metodo menu del objeto menuSedes e inicializa el submenu de sedes
                     MenuSedes menuSedes = new MenuSedes(sedes, registro);
                     menuSedes.menu();
                     break;
                 case 0:
+                // Guarda el archivo en el archivo original
                     System.out.println("Saliendo...");
                     registro.guardarClientesEnArchivo("BigMuscle.csv");
                     break;

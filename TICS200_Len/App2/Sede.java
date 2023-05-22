@@ -1,4 +1,4 @@
-package App;
+package App2;
 
 public class Sede {
     String cod_sede;

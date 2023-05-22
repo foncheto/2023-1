@@ -1,7 +1,7 @@
-package App;
+package App2;
 
 import java.io.IOException;
-
+//creamos la clase MenusSedes que contenga la clase sedes y registro ,y llamamos al menu
 public class MenuSedes extends Menu{
 
     Sedes sedes = super.sedes;
@@ -11,7 +11,7 @@ public class MenuSedes extends Menu{
         this.sedes = sedes;
         this.registro = registro;
     }
-
+//generamos el menu y sus opciones con la interfaz de consola para el usuario
     public void menu() {
         Sedes sedes = super.sedes;
         Registro registro = super.registro;
@@ -30,7 +30,7 @@ public class MenuSedes extends Menu{
           } catch (NumberFormatException e) {
             option = -1;
           }
-    
+ //creamos los casos donde haya un error y que genere un print para que el usuario vea que hubo un error y le haga otra solicitud de sus opciones para trabajar con las sedes     
           switch (option) {
             case 1:
               try {
