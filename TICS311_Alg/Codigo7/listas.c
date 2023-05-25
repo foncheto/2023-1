@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
   nodo2->next = NULL; // el siguiente de nodo2 es NULL ya que queda al final de la lista
   nodo1->next = nodo2; // el siguiente nodo de nodo1 pasa a ser nodo2
   
-  // imprimimos los datos de la lista
+  // imprimimos los datos de la lista6
   //printf("%d ", lista->x);
   //printf("%d\n", lista->next->x);
 
