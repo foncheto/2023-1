@@ -12,64 +12,64 @@ Esto se basa en un archivo txt para el input, el codigo trabaja con este y se ex
 """
 import numpy as np
 
-def find_zeros_in_columns(matrix):
-    zeros_first_column = list(filter(lambda row: row[0] == 0, matrix))
-    zeros_first_column = list(map(lambda row: (matrix.index(row), 0), zeros_first_column))
+def buscarInicioFinal(matrizLab):
+    inicio = list(filter(lambda fila: fila[0] == 0, matrizLab))
+    inicio = list(map(lambda fila: (matrizLab.index(fila), 0), inicio))
 
-    zeros_last_column = list(filter(lambda row: row[-1] == 0, matrix))
-    zeros_last_column = list(map(lambda row: (matrix.index(row), len(row) - 1), zeros_last_column))
+    final = list(filter(lambda fila: fila[-1] == 0, matrizLab))
+    final = list(map(lambda fila: (matrizLab.index(fila), len(fila) - 1), final))
 
-    return zeros_first_column, zeros_last_column
+    return inicio, final
 
-
-def find_paths(matrizLab, row, col, visited, path, paths, zeros_last_column):
+def buscarRecorridos(matrizLab, fila, columna, matrizVisitas, recorrido, recorridosValidos, coordenadasFinal):
     # Verificar límites de la matriz y si la celda ya fue visitada
     if (
-        row < 0 or row >= len(matrizLab)
-        or col < 0 or col >= len(matrizLab[0])
-        or matrizLab[row][col] == 1
-        or visited[row][col]
+        fila < 0 or fila >= len(matrizLab)
+        or columna < 0 or columna >= len(matrizLab[0])
+        or matrizLab[fila][columna] == 1
+        or matrizVisitas[fila][columna]
     ):
         return
 
     # Marcar la celda como visitada y agregarla al camino actual
-    visited[row][col] = True
-    path.append((row, col))
+    matrizVisitas[fila][columna] = True
+    recorrido.append((fila, columna))
 
-    # Si se llega a la posición de destino [4, 4], agregar el camino a la lista de caminos
-    if row == zeros_last_column[0][0] and col == zeros_last_column[0][1]:
-        paths.append(list(path))
+    # Si se llega a la posición de destino  [4, 4], agregar el camino a la lista de caminos
+    if fila == coordenadasFinal[0][0] and columna == coordenadasFinal[0][1]:
+        recorridosValidos.append(list(recorrido))
 
-    # Recursivamente explorar los vecinos en todas las direcciones
-    find_paths(matrizLab, row - 1, col, visited, path, paths, zeros_last_column)  # vecino superior
-    find_paths(matrizLab, row + 1, col, visited, path, paths, zeros_last_column)  # vecino inferior
-    find_paths(matrizLab, row, col - 1, visited, path, paths, zeros_last_column)  # vecino izquierdo
-    find_paths(matrizLab, row, col + 1, visited, path, paths, zeros_last_column)  # vecino derecho
+    # Recursivamente explorar los vecinos en todas las direcciones en sentido horario comenznado por la derecha 
+    # ya que es el supuesto de los laberintos entregados:
+    # Derecha, Abajo, Izquierda, Arriba
+    buscarRecorridos(matrizLab, fila, columna + 1, matrizVisitas, recorrido, recorridosValidos, coordenadasFinal)  # vecino derecho
+    buscarRecorridos(matrizLab, fila + 1, columna, matrizVisitas, recorrido, recorridosValidos, coordenadasFinal)  # vecino inferior
+    buscarRecorridos(matrizLab, fila, columna - 1, matrizVisitas, recorrido, recorridosValidos, coordenadasFinal)  # vecino izquierdo
+    buscarRecorridos(matrizLab, fila - 1, columna, matrizVisitas, recorrido, recorridosValidos, coordenadasFinal)  # vecino superior
 
     # Desmarcar la celda y eliminarla del camino actual antes de retroceder
-    visited[row][col] = False
-    path.pop()
+    matrizVisitas[fila][columna] = False
+    recorrido.pop()
 
 
 # Leer la matriz desde el archivo de texto
 with open("App3/input.txt", "r") as file:
-    matrix = [list(map(int, line.strip().split())) for line in file]
+    matrizLab = [list(map(int, line.strip().split())) for line in file]
 
 # Encontrar las posiciones de los ceros en la primeraa y última columna
-zeros_first_column, zeros_last_column = find_zeros_in_columns(matrix)
+coordenadasInicio, coordenadasFinal = buscarInicioFinal(matrizLab)
 
 # Crear una matriz de visitados para rastrear las celdas visitadas
-visited = np.full((len(matrix), len(matrix[0])), False, dtype=bool)
+matrizVisitas = np.full((len(matrizLab), len(matrizLab[0])), False, dtype=bool)
 
 # Lista para almacenar los caminos encontrados
-paths = []
+recorridos = []
 
 # Llamar a la función para encontrar todos los caminos posibles
-find_paths(matrix, zeros_first_column[0][0], zeros_first_column[0][1], visited, [], paths, zeros_last_column)
+buscarRecorridos(matrizLab, coordenadasInicio[0][0], coordenadasInicio[0][1], matrizVisitas, [], recorridos, coordenadasFinal)
 
 # Enumerar y imprimir los caminos encontrados
-print(paths)
+print(recorridos)
 
-with open("App3/output.txt", "w") as output_file:
-    for path in paths:
-        output_file.write(",".join(map(str, path)) + "\n")
+with open("App3/output.txt", "w") as output:
+    output.write(",".join(map(str, recorridos)))
