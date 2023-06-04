@@ -5,7 +5,6 @@ import copy
 def leer_archivo(filename):
     return np.loadtxt(filename, dtype=int)
 
-
 #Primero se establece la funcion de orden superior que se encargara de evaluar si el movimiento es posible
 #Se establecen las condiciones que debe cumplir el movimiento para ser posible: bordes, libre y no volver
 
