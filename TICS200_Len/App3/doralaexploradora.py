@@ -62,6 +62,10 @@ coordenadasInicio, coordenadasFinal = buscarInicioFinal(matrizLab)
 # Crear una matriz de visitados para rastrear las celdas visitadas
 matrizVisitas = np.full((len(matrizLab), len(matrizLab[0])), False, dtype=bool)
 
+def generarVisitas(matrizLab):
+    matrizVisitas = np.full((len(matrizLab), len(matrizLab[0])), False, dtype=bool)
+    return matrizVisitas
+
 # Lista para almacenar los caminos encontrados
 recorridos = []
 
