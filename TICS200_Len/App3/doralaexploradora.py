@@ -51,6 +51,9 @@ def buscarRecorridos(matrizLab, fila, columna, matrizVisitas, recorrido, recorri
     matrizVisitas[fila][columna] = False
     recorrido.pop()
 
+def leer_Archivo(nombreArchivo):
+    with open(nombreArchivo, "r") as file:
+        return [list(map(int, line.strip().split())) for line in file]
 
 # Leer la matriz desde el archivo de texto
 with open("App3/input.txt", "r") as file:
@@ -62,10 +65,6 @@ coordenadasInicio, coordenadasFinal = buscarInicioFinal(matrizLab)
 # Crear una matriz de visitados para rastrear las celdas visitadas
 matrizVisitas = np.full((len(matrizLab), len(matrizLab[0])), False, dtype=bool)
 
-def generarVisitas(matrizLab):
-    matrizVisitas = np.full((len(matrizLab), len(matrizLab[0])), False, dtype=bool)
-    return matrizVisitas
-
 # Lista para almacenar los caminos encontrados
 recorridos = []
 
@@ -75,5 +74,17 @@ buscarRecorridos(matrizLab, coordenadasInicio[0][0], coordenadasInicio[0][1], ma
 # Enumerar y imprimir los caminos encontrados
 print(recorridos)
 
-with open("App3/output.txt", "w") as output:
-    output.write(",".join(map(str, recorridos)))
+def escribir_Archivo(nombreArchivo, recorridos):
+    with open(nombreArchivo, "w") as file:
+        file.write(",".join(map(str, recorridos)))
+
+if __name__ == "__main__":
+    leer_Archivo("App3/input.txt")
+    buscarInicioFinal(matrizLab)
+    buscarRecorridos(matrizLab, coordenadasInicio[0][0], coordenadasInicio[0][1], matrizVisitas, [], recorridos, coordenadasFinal)
+    escribir_Archivo("App3/output.txt", recorridos)
+    print(recorridos)
+    print(matrizLab)
+    print(coordenadasInicio)
+    print(coordenadasFinal)
+    print(matrizVisitas)
