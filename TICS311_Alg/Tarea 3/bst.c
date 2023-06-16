@@ -3,31 +3,27 @@
 // Inserta el valor data en el arbol binario de busqueda
 // Retorna la nueva raiz del arbol
 nodo_arbol *insertar_arbol(nodo_arbol *node, int data)
-{   
-    if (node == NULL) { // caso arbol vacio
-        nodo *tmp = (nodo *)malloc(sizeof(nodo));
-        tmp->data = data;
-        tmp->left = NULL;
-        tmp->right = NULL;
-        return tmp;
-    }
+{
+    nodo_arbol *nuevo_nodo = (nodo_arbol *)malloc(sizeof(nodo_arbol));
+    nuevo_nodo->data = data;
+    nuevo_nodo->left = NULL;
+    nuevo_nodo->right = NULL;
 
-    // caso en que el arbol es no vacio
-    // en este caso la raiz es la misma, por eso hacemos "return node;" al final
-    // llamamos recursivamente al metodo insert ya sea al lado izquierdo o derecho
-    // actualizamos el hijo correpondiente con la nueva raiz obtenida
-    if (data < node->data) {
-        node->left = insert(node->left, data);
+    if (node == NULL)
+    {
+        // Si el árbol está vacío, el nuevo nodo se convierte en la raíz
+        return nuevo_nodo;
     }
-    else {
-        node->right = insert(node->right, data);
+    else
+    {
+        // Si el árbol no está vacío, insertamos el nuevo nodo como la nueva raíz
+        nuevo_nodo->left = node;
+        return nuevo_nodo;
     }
-
-    return node;
 }
 
 // Busca el valor data en el arbol binario de busqueda
-// Retorna el primer nodo que se encuentra con valor data, si existe, 
+// Retorna el primer nodo que se encuentra con valor data, si existe,
 // o NULL en caso contrario
 nodo_arbol *buscar_arbol(nodo_arbol *root, int data)
 {
@@ -81,4 +77,3 @@ void imprimir_arbol_inorder(nodo_arbol *root)
         imprimir_arbol_inorder(nodo_actual->right);
     }
 }
-

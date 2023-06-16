@@ -2,24 +2,13 @@
 // Inserta el valor data al comienzo de la lista
 // Retorna un puntero al primer nodo de la nueva lista
 // OJO: el elemento se debe insertar al comienzo de la lista
-nodo_lista *insertar_lista(nodo_lista **lista, int data)
+nodo_lista *insertar_lista(nodo_lista *lista, int data)
 {
-    if (*ref_lista == NULL) { // caso lista vacia
-        nodo *nuevo_nodo = (nodo *)malloc(sizeof(nodo));
-        nuevo_nodo->x = valor; 
-        nuevo_nodo->next = NULL; 
-        *ref_lista = nuevo_nodo;  // aca es donde modificamos la variable lista
-    }
-    else { // caso lista no vacia
-        nodo *it = *ref_lista;
-        while(it->next != NULL) { // importante preguntar it->next != NULL y no it != NULL
-            it = it->next;
-        }
-        nodo *nuevo_nodo = (nodo *)malloc(sizeof(nodo));
-        nuevo_nodo->x = valor; 
-        nuevo_nodo->next = NULL; 
-        it->next = nuevo_nodo;
-    }
+    nodo_lista *tmp = (nodo_lista *)malloc(sizeof(nodo_lista));
+    tmp->data = data;
+    tmp->next = lista;
+    lista = tmp;
+    return lista;
 }
 
 // Busca el valor data en la lista partiendo desde el comienzo hasta el final
@@ -38,8 +27,7 @@ nodo_lista *buscar_lista(nodo_lista *lista, int data)
     }
     return NULL;
 }
-    
-    
+
 // Imprime en pantalla la lista desde el comienzo hasta el final
 void imprimir_lista(nodo_lista *lista)
 {
