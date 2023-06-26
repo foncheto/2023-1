@@ -1,21 +1,27 @@
-#
-# Librerías
-import time  # Para control de pausas
-from bs4 import BeautifulSoup  # Para hermosear HTMLs
-from selenium import webdriver  # Para realizar web scraping
+import time
+from bs4 import BeautifulSoup
+from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-import sys  # Para capturar información del error
+from BancoOP import ValorUFScraper
+from Producto import Producto
 
 # Constantes
 B_VERBOSE_DEBUG = True  # Para debug
 B_VERBOSE_RESULT = True  # Para mostrar resultados de capturas de datos
-# Patrones de búsqueda
-L_FIND = ["notebook hp", "tablet samsung", "impresora 3D", "MacBook Pro", "jkljkljkl"]
+
+# Patrones de búsqueda al leer el archivo .txt
+with open("patrones_busqueda.txt", "r") as file:
+    L_FIND = file.read().splitlines()
+
+# Llamamos la funcion que nos entrega el valor de la UF a teaves del scraping de la pagina del banco central
+scraper = ValorUFScraper()
+valorUF = scraper.valor_uf()
+scraper.close_driver()
 
 
-# Hacer una pausa en segundos para saltarse sleep de Python (le causa problemas al web driver)
+# Hacer una pausa en segundos para que la funcion pare por unos segundos, esto nos ayudara para cuando se demore en cargar la pagina web
 def mySleep(nTimeOut):
     nTimeInit = time.time()
     nTimeDifference = time.time() - nTimeInit
@@ -23,7 +29,7 @@ def mySleep(nTimeOut):
         nTimeDifference = time.time() - nTimeInit
 
 
-# Hacer una pausa MÁXIMA en segundos o hasta que aparezca sXpath
+# Hacer una pausa hasta una accion u ocurrencia especifica
 def mySleepUntilObject(nTimeOut, driver, sXpath):
     nTimeInit = time.time()
     nTimeDifference = time.time() - nTimeInit
@@ -32,10 +38,8 @@ def mySleepUntilObject(nTimeOut, driver, sXpath):
         nTimeDifference = time.time() - nTimeInit
         try:
             contentData = driver.find_element(By.XPATH, sXpath)
-            bContinuar = False  # Sino se cae la línea anterior es porque ya apareció el objeto, por lo que salimos del while de pausa
+            bContinuar = False
         except:
-            # print('Error en sleep')
-            # print('ClassError: {} - NameError: {}'.format(sys.exc_info()[0], sys.exc_info()[1]))
             pass
 
 
@@ -50,239 +54,154 @@ def clickWithWait(nTimeOut, driver, sXpath):
         try:
             btnToBeClick = driver.find_element(By.XPATH, sXpath)
             btnToBeClick.click()
-            bContinuar = (
-                False  # Sino se cae la línea anterior es porque ya hizo el click
-            )
+            bContinuar = False
             bClickDone = True
         except:
-            # print(f'error click {nTimeDifference}')
             pass
     return bClickDone
 
 
-# Generar archivo HTML de salida
-def outputHtml(sFile, lxmlData):
-    fOutputHtml = open(sFile, "w")
-    fOutputHtml.write(lxmlData.prettify())
-    fOutputHtml.close()
+# lista a rellenar y luego exportar al main
+listResult = []
 
+# Configuración del Driver Selenium para Chrome
+chrome_options = Options()
+chrome_options.add_argument("--no-sandbox")
+chrome_options.add_argument("--disable-dev-shm-usage")
+driver = webdriver.Chrome(options=chrome_options)
 
-#
-# MAIN
-#
-if __name__ == "__main__":
-    # Lista de diccionario (nombre y precio) en la que se llenará la data
-    listResult = []
+# Recorremos lista de patrones de búsqueda
+for S_FIND in L_FIND:
+    if B_VERBOSE_DEBUG:
+        print("=" * len("Patrón de búsqueda: {}".format(S_FIND)))
+        print("Patrón de búsqueda: {}".format(S_FIND))
+        print("=" * len("Patrón de búsqueda: {}".format(S_FIND)))
 
-    # Configuración del Driver Selenium para Chrome
-    chrome_options = Options()
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.add_argument("--ignore-ssl-errors")
-    chrome_options.add_argument("--ignore-certificate-errors")
-    driver = webdriver.Chrome(options=chrome_options)
+    # Ingresamos patrón de búsqueda
+    driver.get("https://www.ripley.com")
+    mySleep(2)
+    inputText = driver.find_element(By.XPATH, '//input[@type="search"]')
+    inputText.send_keys(S_FIND)
+    inputText.send_keys(Keys.ENTER)
+    mySleep(1)
 
-    # Recorremos lista de patrones de búsqueda
-    for S_FIND in L_FIND:
+    # Verificar si hay datos
+    bOkExistData = False
+    try:
+        sXpath = '//*[@id="catalog-page"]/div/div[2]/div[3]/section/div/div'
+        btnPage1 = driver.find_element(By.XPATH, sXpath)
+        bOkExistData = True
+        print("Hay datos")
+    except:
         if B_VERBOSE_DEBUG:
-            print("=" * len("Patrón de búsqueda: {}".format(S_FIND)))
-            print("Patrón de búsqueda: {}".format(S_FIND))
-            print("=" * len("Patrón de búsqueda: {}".format(S_FIND)))
+            print("No hay datos")
+        pass
 
-        # Ingresamos patrón de búsqueda
-        driver.get("https://simple.ripley.cl/")
-        mySleep(2)
-        inputText = driver.find_element(By.XPATH, '//*[@id="testId-SearchBar-Input"]')
-        inputText.send_keys(S_FIND)
-        inputText.send_keys(Keys.ENTER)
-        mySleep(1)
+    cookiePath = '//button[text()="Aceptar"]'
+    clickWithWait(3, driver, cookiePath)
 
-        # Verificar si hay datos
-        bOkExistData = False
+    # Iterar en todas las páginas si es que existen
+    nPage = 1
+    while bOkExistData:
+        if B_VERBOSE_DEBUG:
+            print("{}: Página {}".format(S_FIND, nPage))
+
+        # Capturar datos desde el contenedor
         try:
-            sXpath = '//*[@id="testId-searchResults-products"]'
-            btnPage1 = driver.find_element_by_id("searchInput")
-            bOkExistData = True
-            print("Hay datos")
-        except:
-            if B_VERBOSE_DEBUG:
-                print("No hay datos")
-            pass
+            sXpath = '//*[@id="catalog-page"]/div/div[2]/div[3]/section/div/div'
+            mySleepUntilObject(20, driver, sXpath)
+            mySleep(2)
 
-        # Iterar en todas las páginas
-        nPage = 1
-        while bOkExistData:
-            if B_VERBOSE_DEBUG:
-                print("{}: Página {}".format(S_FIND, nPage))
+            # Capturamos HTML del contenedor de productos tecnológicos
+            contentData = driver.find_element(By.XPATH, sXpath)
+            htmlData = contentData.get_attribute("innerHTML")
+            lxmlData = BeautifulSoup(htmlData, "lxml")
 
-            # Capturar datos desde el contenedor
-            try:
-                # Esperamos a que termine de cargar
-                # Luego de carga inicial para primera pasada
-                # O luego de páginación para siguientes pasadas
-                sXpath = '//*[@id="testId-searchResults-products"]'
-                mySleepUntilObject(20, driver, sXpath)
-                mySleep(2)
-
-                # Capturamos HTML del contenedor de productos tecnológicos
-                sXpath = '//*[@id="testId-searchResults-products"]'
-                contentData = driver.find_element(By.XPATH, sXpath)
-                htmlData = contentData.get_attribute("innerHTML")
-                lxmlData = BeautifulSoup(htmlData, "lxml")
-
-                # Generamos HTML
-                outputHtml("ripley_{}_{}.html".format(S_FIND, nPage), lxmlData)
-
-                # Determinamos el tipo de contenedor
-                # 0: No reconocido
-                # 1: Multiples productos por línea
-                # 2: Un producto por línea
-                nContentType = 0
-                sNames = lxmlData.find_all(
-                    "div",
-                    class_="catalog-product-details",
-                )
-                if len(sNames) > 0:
-                    nContentType = 1
-                else:
-                    sNames = lxmlData.find_all(
-                        "b",
-                        class_="jsx-1576191951 title2 primary jsx-2889528833 bold pod-subTitle subTitle-rebrand",
-                    )
-                    if len(sNames) > 0:
-                        nContentType = 2
-                    else:
-                        if B_VERBOSE_DEBUG:
-                            print("Contenedor no reconocido")
+            # Verificamos tipo de contenedor
+            nContentType = 0
+            sNames = lxmlData.find_all(
+                "div",
+                {"class": "catalog-product-details__name"},
+            )
+            if len(sNames) > 0:
+                nContentType = 1
+            else:
                 if B_VERBOSE_DEBUG:
-                    print("Tipo contenedor: {}".format(nContentType))
+                    print("Contenedor no reconocido")
+            if B_VERBOSE_DEBUG:
+                print("Tipo contenedor: {}".format(nContentType))
+            # Capturamos datos del contenedor
+            if nContentType == 1:
+                sPrices = lxmlData.find_all(
+                    "li",
+                    {"class": "catalog-prices__offer-price"},
+                )
 
-                # Capturamos datos del contenedor
+            # Recorremos el contenedor para llenar lista con un nuevo objeto Producto
+            for i in range(len(sNames)):
+                # Capturamos según tipo de contenedor
                 if nContentType == 1:
-                    sNames = lxmlData.find_all(
-                        "div",
-                        class_="jsx-1833870204 jsx-3831830274 pod-details pod-details-4_GRID has-stickers",
+                    nuevoProducto = Producto()
+                    nPrecio = sPrices[i].text.replace("$", "").replace(".", "")
+                    nuevoProducto.setPrecio(int(nPrecio))
+                    nuevoProducto.setPrecioUf(round((float(nPrecio) / valorUF), 2))
+                    nuevoProducto.setDescripcion(sNames[i].text)
+                    nuevoProducto.setPatronBusqueda(S_FIND)
+                    nuevoProducto.setMultiTienda("Ripley")
+                    listResult.append(nuevoProducto)
+                    print(listResult[-1].precio, listResult[-1].descripcion)
+            print("done")
+            try:
+                # Obtenemos botón próxima página, sino se caerá y será capturado en except
+                sXpath = '//*[@id="catalog-page"]/div/div[2]/div[4]/nav/ul/li[5]/a'
+
+                button = driver.find_element(
+                    By.XPATH,
+                    '//*[@id="catalog-page"]/div/div[2]/div[4]/nav/ul/li[5]/a',
+                )
+                if "is-disabled" in button.get_attribute("class"):
+                    bOkExistData = False
+
+                else:
+                    driver.execute_script(
+                        "document.querySelector('div.footer').remove();"
                     )
-                    sPrices = lxmlData.find_all(
-                        "a",
-                        class_="jsx-1833870204 jsx-3831830274 pod-summary pod-link pod-summary-4_GRID",
+
+                    scroll_height = driver.execute_script(
+                        "return document.body.scrollHeight"
                     )
-                else:  # elif (nContentType == 2):
-                    sNames = lxmlData.find_all(
-                        "b",
-                        class_="jsx-1576191951 title2 primary jsx-2889528833 bold pod-subTitle subTitle-rebrand",
-                    )
-                    sPrices = lxmlData.find_all(
-                        "div", class_="jsx-2112733514 prices prices-4_GRID"
-                    )
-
-                # Recorremos el contenedor para llenar lista
-                for i in range(len(sNames)):
-                    # Capturamos según tipo de contenedor
-                    if nContentType == 1:
-                        nPrecio = (
-                            sPrices[i]
-                            .div.ol.li.div.span.string.replace("$", "")
-                            .replace(" ", "")
-                            .replace(".", "")
-                        )
-                        listResult.append(
-                            {
-                                "patron_busqueda": S_FIND,
-                                "nombre": sNames[i].a.span.b.string,
-                                "precio": nPrecio,
-                            }
-                        )
-                    else:  # elif (nContentType == 2):
-                        nPrecio = (
-                            sPrices[i]
-                            .ol.li.div.span.string.replace("$", "")
-                            .replace(" ", "")
-                            .replace(".", "")
-                        )
-                        listResult.append(
-                            {
-                                "patron_busqueda": S_FIND,
-                                "nombre": sNames[i].string,
-                                "precio": nPrecio,
-                            }
-                        )
-
-                    # Imprimimos
-                    if B_VERBOSE_DEBUG:
-                        print(listResult[len(listResult) - 1])
-
-                # Capturamos HTML de la botonera de paginación
-                """
-                sXpath = '//*[@id="testId-searchResults-actionBar-bottom"]/div[2]'
-                contentData = driver.find_element(By.XPATH, sXpath)
-                htmlData = contentData.get_attribute('innerHTML')
-                lxmlData = BeautifulSoup(htmlData, 'lxml')
-
-                # Generamos HTML
-                outputHtml('falabella_{}_{}_buttons.html'.format(S_FIND, nPage), lxmlData)
-                """
-
-                # Dar click a la siguiente página
-                try:
-                    # Obtenemos botón próxima página, sino se caerá y será capturado en except
-                    sXpath = '//*[@id="testId-pagination-bottom-arrow-right"]/i'
-                    contentData = driver.find_element(By.XPATH, sXpath)
 
                     # Intentamos click por espera para próxima página
                     driver.execute_script(
-                        "window.scrollTo(0, document.body.scrollHeight);"
+                        "window.scrollTo(0, arguments[0]);", scroll_height
                     )
-                    bOkExistData = clickWithWait(2, driver, sXpath)
 
-                    # Si retorna en False es porque existe el botón siguiente pero no quedó clickleable
-                    if not (bOkExistData):
-                        if B_VERBOSE_DEBUG:
-                            print("Reintento con scroll fin + F5")
+                    bOkExistData = clickWithWait(3, driver, sXpath)
 
-                        # Hacemos scroll hasta el final y luego F5 para refrescar
-                        driver.execute_script(
-                            "window.scrollTo(0, document.body.scrollHeight);"
-                        )
-                        driver.get(driver.current_url)
-
-                        # Intentamos NUEVAMENTE click por espera para próxima página
-                        bOkExistData = clickWithWait(2, driver, sXpath)
-                        if not (bOkExistData):
-                            if B_VERBOSE_DEBUG:
-                                print("No se logró hacer click a la siguiente página")
-                except:
-                    if B_VERBOSE_DEBUG:
-                        print("No hay más páginas de información")
-                        # print('ClassError: {} - NameError: {}'.format(sys.exc_info()[0], sys.exc_info()[1]))
-                    bOkExistData = False
+                # Si retorna en False es porque existe el botón siguiente pero no quedó clickleable
             except:
                 if B_VERBOSE_DEBUG:
-                    print("Caída al capturar contenedor")
+                    print("No hay más páginas de información")
                     # print('ClassError: {} - NameError: {}'.format(sys.exc_info()[0], sys.exc_info()[1]))
                 bOkExistData = False
+        except:
+            if B_VERBOSE_DEBUG:
+                print("Caída al capturar contenedor")
+                # print('ClassError: {} - NameError: {}'.format(sys.exc_info()[0], sys.exc_info()[1]))
+            bOkExistData = False
 
-            nPage = nPage + 1
+        nPage = nPage + 1
 
-    # Cierre del driver
-    driver.close()
-    driver.quit()
+# Cierre del driver
+driver.close()
+driver.quit()
 
-    # Imprimir capturas de datos
-    if B_VERBOSE_RESULT:
-        print("=" * len("Lista total:"))
-        print("Lista total:")
-        print("=" * len("Lista total:"))
-        print(*listResult, sep="\n")
-        [
-            print(
-                '"{}";"{}";{}'.format(
-                    item["patron_busqueda"], item["nombre"], item["precio"]
-                )
-            )
-            for item in listResult
-        ]
+# Proceso finalizado
+if B_VERBOSE_DEBUG:
+    print("Proceso finalizado")
 
-    # Proceso finalizado
-    if B_VERBOSE_DEBUG:
-        print("Proceso finalizado")
+""" Se genero este codigo de WebScrapping usando paradigma procedural, es decir con el uso de atribuciones imperativas con secuencias especificas, y en este caso se realizo para
+la pagina web de la multitienda Ripley, este codigo fue una adaptacion del codigo de las clases de nuestro ramo Lenguajes y Paradigmas de programación con los diversos ejemplos
+de Webscapping que se nos dio, asi pudiendolo usar para diversas situaciones, como en este caso para ripley.
+                    
+                    """

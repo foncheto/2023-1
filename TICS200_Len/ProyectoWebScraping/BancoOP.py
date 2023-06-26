@@ -34,23 +34,18 @@ class ValorUFScraper:
         print("Float:            {}".format(nUF))
         print(fecha_uf)
         self.save_to_csv(nUF, fecha_uf)
+        return nUF
 
     # csv
     def save_to_csv(self, valor, fecha):
-        with open("valorUF.csv", "w", newline="") as archivo_csv:
+        with open("parametros.csv", "w", newline="") as archivo_csv:
             writer = csv.writer(archivo_csv)
-            writer.writerow(["Valor Uf", "fecha"])
-            writer.writerow([valor, fecha])
+            writer.writerow(["Fecha", "Valor Uf"])
+            writer.writerow([fecha, valor])
 
-    def valor_uf(sUF):
-        val_uf = int(sUF)
+    def valor_uf(self):
+        val_uf = self.scrape_valor_uf()
         return val_uf
 
     def close_driver(self):
         self.driver.quit()
-
-
-if __name__ == "__main__":
-    scraper = ValorUFScraper()
-    scraper.scrape_valor_uf()
-    scraper.close_driver()
